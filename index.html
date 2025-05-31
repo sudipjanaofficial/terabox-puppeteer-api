@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TeraBox Video Player</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+  input[type="text"] { width: 100%; padding: 10px; font-size: 16px; }
+  button { padding: 10px 20px; margin-top: 10px; }
+  video { width: 100%; margin-top: 20px; }
+  #message { color: red; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h2>TeraBox Video Player Online</h2>
+<p>আপনার TeraBox ভিডিও URL দিন:</p>
+<input id="urlInput" type="text" placeholder="TeraBox শেয়ার URL দিন" />
+<button id="playBtn">ভিডিও প্লে করুন</button>
+<div id="message"></div>
+<video id="videoPlayer" controls></video>
+
+<script>
+  const playBtn = document.getElementById('playBtn');
+  const urlInput = document.getElementById('urlInput');
+  const message = document.getElementById('message');
+  const videoPlayer = document.getElementById('videoPlayer');
+
+  playBtn.addEventListener('click', async () => {
+    const url = urlInput.value.trim();
+    if (!url) {
+      message.textContent = 'URL অবশ্যই দিতে হবে।';
+      return;
+    }
+    message.textContent = 'ভিডিও লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।';
+
+    try {
+      const res = await fetch('https://আপনার-render-api-url/api/get-video-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        message.textContent = data.error;
+        videoPlayer.src = '';
+      } else {
+        message.textContent = '';
+        videoPlayer.src = data.directLink;
+        videoPlayer.play();
+      }
+    } catch (err) {
+      message.textContent = 'সার্ভারের সাথে সংযোগ করতে সমস্যা হয়েছে।';
+    }
+  });
+</script>
+</body>
+</html>
