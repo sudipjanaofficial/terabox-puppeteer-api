@@ -13,10 +13,11 @@ app.post('/extract', async (req, res) => {
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
-    const page = await browser.newPage();
 
+    const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle2' });
 
+    // এখানে video tag থেকে src নিয়ে আসছি
     const videoUrl = await page.evaluate(() => {
       const video = document.querySelector('video');
       return video ? video.src : null;
@@ -29,12 +30,12 @@ app.post('/extract', async (req, res) => {
     } else {
       res.status(404).json({ error: 'Video URL not found' });
     }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
